@@ -3,62 +3,43 @@ package mock
 import (
 	"context"
 	"itemmeli/package/models"
+
+	"github.com/stretchr/testify/mock"
 )
 
 type MockCache struct {
-	itemDetails map[string]*models.Item       // key: userID|itemID
-	itemPrices  map[string]*models.Price      // key: userID|itemID
-	recs        map[string][]models.ItemShort // key: userID
+	mock.Mock
 }
 
-func NewMockCache() *MockCache {
-	return &MockCache{
-		itemDetails: make(map[string]*models.Item),
-		itemPrices:  make(map[string]*models.Price),
-		recs:        make(map[string][]models.ItemShort),
+func (m *MockCache) GetItemDetails(ctx context.Context, userID, itemID string) (*models.Item, error) {
+	args := m.Called(ctx, userID, itemID)
+	if item, ok := args.Get(0).(*models.Item); ok {
+		return item, args.Error(1)
 	}
+	return nil, args.Error(1)
+}
+func (m *MockCache) SetItemDetails(ctx context.Context, userID, itemID string, item *models.Item) error {
+	return m.Called(ctx, userID, itemID, item).Error(0)
 }
 
-// build key helper
-func makeKey(userID, itemID string) string {
-	return userID + "|" + itemID
-}
-
-func (c *MockCache) GetItemDetails(ctx context.Context, userID, itemID string) (*models.Item, error) {
-	key := makeKey(userID, itemID)
-	if val, ok := c.itemDetails[key]; ok {
-		return val, nil
+func (m *MockCache) GetCustomersRecommendations(ctx context.Context, userID, itemID string) ([]models.ItemShort, error) {
+	args := m.Called(ctx, userID, itemID)
+	if recs, ok := args.Get(0).([]models.ItemShort); ok {
+		return recs, args.Error(1)
 	}
-	return nil, nil // not found
+	return nil, args.Error(1)
+}
+func (m *MockCache) SetCustomersRecommendations(ctx context.Context, userID, itemID string, recs []models.ItemShort) error {
+	return m.Called(ctx, userID, itemID, recs).Error(0)
 }
 
-func (c *MockCache) SetItemDetails(ctx context.Context, userID, itemID string, itemDetail *models.Item) error {
-	key := makeKey(userID, itemID)
-	c.itemDetails[key] = itemDetail
-	return nil
-}
-
-func (c *MockCache) GetItemPrice(ctx context.Context, userID, itemID string) (*models.Price, error) {
-	key := makeKey(userID, itemID)
-	if val, ok := c.itemPrices[key]; ok {
-		return val, nil
+func (m *MockCache) GetItemPrice(ctx context.Context, userID, itemID string) (*models.Price, error) {
+	args := m.Called(ctx, userID, itemID)
+	if recs, ok := args.Get(0).(*models.Price); ok {
+		return recs, args.Error(1)
 	}
-	return nil, nil
+	return nil, args.Error(1)
 }
-
-func (c *MockCache) SetItemPrice(ctx context.Context, userID, itemID string, price *models.Price) error {
-	key := makeKey(userID, itemID)
-	c.itemPrices[key] = price
-	return nil
-}
-
-func (c *MockCache) GetCustomersRecommendations(ctx context.Context, userID string) ([]models.ItemShort, error) {
-	if val, ok := c.recs[userID]; ok {
-		return val, nil
-	}
-	return nil, nil
-}
-
-func (c *MockCache) SetCustomersRecommendations(ctx context.Context, userID string, recommendations []models.ItemShort) {
-	c.recs[userID] = recommendations
+func (m *MockCache) SetItemPrice(ctx context.Context, userID, itemID string, price *models.Price) error {
+	return m.Called(ctx, userID, itemID, price).Error(0)
 }

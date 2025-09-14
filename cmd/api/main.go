@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"itemmeli/package/cache"
 	"itemmeli/package/config"
+	"itemmeli/package/database"
 	"itemmeli/package/server"
 	"itemmeli/package/service"
 
@@ -62,7 +63,11 @@ func runServer(cCtx *cli.Context) error {
 	}
 
 	cache := cache.NewRedisCache(configYaml)
-	service := service.NewService(cache)
+	database, err := database.NewJSONDatabase(configYaml)
+	if err != nil {
+		return fmt.Errorf("failed to load database: %w", err)
+	}
+	service := service.NewService(cache, database)
 	server := server.NewServerV1(service, configYaml)
 
 	go func() {

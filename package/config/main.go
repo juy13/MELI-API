@@ -11,7 +11,7 @@ import (
 
 type YamlConfig struct {
 	// api
-	API APIStruct `yaml:"api,omitempty"`
+	API APIStruct `yaml:"api"`
 
 	// metrics
 	MetricsServer MetricsConfigStruct `yaml:"metrics,omitempty"`
@@ -20,7 +20,7 @@ type YamlConfig struct {
 	Redis CacheConfigStruct `yaml:"cache"`
 
 	// database
-	Database DatabaseConfigStruct `yaml:"database,omitempty"`
+	Database DatabaseConfigStruct `yaml:"database"`
 }
 
 type DatabaseConfigStruct struct {
