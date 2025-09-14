@@ -2,7 +2,7 @@ package cache
 
 import (
 	"context"
-	"itemmeli/package/models"
+	"itemmeli/models"
 	"testing"
 	"time"
 

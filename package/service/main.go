@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
+	"itemmeli/models"
 	"itemmeli/package/cache"
 	"itemmeli/package/database"
-	"itemmeli/package/models"
 )
 
 type APIService struct {

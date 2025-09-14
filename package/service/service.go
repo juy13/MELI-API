@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"itemmeli/package/models"
+	"itemmeli/models"
 )
 
 type Service interface {

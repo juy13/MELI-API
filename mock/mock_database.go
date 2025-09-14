@@ -2,7 +2,7 @@ package mock
 
 import (
 	"context"
-	"itemmeli/package/models"
+	"itemmeli/models"
 
 	"github.com/stretchr/testify/mock"
 )

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"itemmeli/mock"
-	"itemmeli/package/models"
+	"itemmeli/models"
 	"testing"
 
 	"github.com/stretchr/testify/require"

@@ -2,7 +2,7 @@ package database
 
 import (
 	"context"
-	"itemmeli/package/models"
+	"itemmeli/models"
 )
 
 type Database interface {
