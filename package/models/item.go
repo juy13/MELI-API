@@ -5,7 +5,7 @@ type Item struct {
 	Title                  string      `json:"title"`
 	Stars                  int         `json:"stars"`
 	Price                  Price       `json:"price"`
-	Shipping               string      `json:"shipping"`
+	Shipping               Shipping    `json:"shipping"`
 	Colors                 []string    `json:"colors"` // idk could be anything actually, size, color, size+color etc
 	Available              bool        `json:"available"`
 	Guarantee              string      `json:"guarantee"`
@@ -30,10 +30,10 @@ type Seller struct {
 }
 
 type ItemShort struct {
-	ID       string `json:"id"`
-	Title    string `json:"title"` // item title
-	Price    Price  `json:"price"`
-	Shipping string `json:"shipping"` // when will be delivered
+	ID       string   `json:"id"`
+	Title    string   `json:"title"` // item title
+	Price    Price    `json:"price"`
+	Shipping Shipping `json:"shipping"` // when will be delivered
 }
 
 type QASection struct {
