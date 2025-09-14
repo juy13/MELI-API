@@ -42,7 +42,7 @@ So it's possible to divide on 2 endpoints:
     - seller products
     - buy also
     - 4 stars and more
-    - cheeper products
+    - cheaper products
 - `item`:
     - Item info
     - sellers info

@@ -24,7 +24,7 @@ type ServerV1 struct {
 
 // @title MELI Item Detail
 // @version 1.0
-// @description This is a server to get item details for MercadoLibre frontend page.
+// @description This is an API to get item details for MercadoLibre frontend page.
 // @termsOfService http://swagger.io/terms/
 
 func NewServerV1(service service.Service, config config.APIConfig) *ServerV1 {
@@ -62,8 +62,8 @@ func (s *ServerV1) Stop(ctx context.Context) error {
 // @Summary		Get item info
 // @Description	Getting information for provided item
 // @Tags 		item
-// @Param		itemID path integer 	true 	"The users id"
-// @Param		userID query integer 	true 	"User id"
+// @Param		itemID path string 	 	true 	"The users id"
+// @Param		userID query string 	true 	"User id"
 // @Success		200
 // @Failure		400					"The specified URL is invalid"
 // @Failure		404					"Not found"
@@ -71,6 +71,12 @@ func (s *ServerV1) Stop(ctx context.Context) error {
 // @Failure		500					"Internal server error"
 // @Router		/api/v1/item/{itemID} [get]
 func (s *ServerV1) itemDetails(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	vars := mux.Vars(r)
+	itemID := vars["itemID"]
+	client := r.URL.Query().Get("client")
+
+	s.meliService.GetItemDetails(ctx, itemID, client)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 }
@@ -78,8 +84,8 @@ func (s *ServerV1) itemDetails(w http.ResponseWriter, r *http.Request) {
 // @Summary		Get recommendations
 // @Description	Get recommendations for a given user and item
 // @Tags 		item
-// @Param		itemID path integer 	true 	"The users id"
-// @Param		userID query integer 	true 	"User id"
+// @Param		itemID path string 	true 	"The users id"
+// @Param		userID query string 	true 	"User id"
 // @Success		200
 // @Failure		400					"The specified URL is invalid"
 // @Failure		404					"Not found"
@@ -87,6 +93,12 @@ func (s *ServerV1) itemDetails(w http.ResponseWriter, r *http.Request) {
 // @Failure		500					"Internal server error"
 // @Router		/api/v1/recommendations/{itemID} [get]
 func (s *ServerV1) recommendations(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	vars := mux.Vars(r)
+	itemID := vars["itemID"]
+	client := r.URL.Query().Get("client")
+
+	s.meliService.GetItemDetails(ctx, itemID, client)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 }

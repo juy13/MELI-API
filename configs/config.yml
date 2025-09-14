@@ -4,3 +4,10 @@ api:
 metrics_server:
   host: localhost
   port: 9090
+cache:
+  address: localhost
+  password: ""
+  db: 0
+  price_ttl: 3600s
+  item_details_ttl: 7200s
+  customers_recommendations_ttl: 86400s

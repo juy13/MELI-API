@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"itemmeli/package/cache"
 	"itemmeli/package/config"
 	"itemmeli/package/server"
+	"itemmeli/package/service"
 
 	"net/http"
 	"os"
@@ -59,7 +61,9 @@ func runServer(cCtx *cli.Context) error {
 		return fmt.Errorf("failed to load config: %w", err)
 	}
 
-	server := server.NewServerV1(nil, configYaml)
+	cache := cache.NewRedisCache(configYaml)
+	service := service.NewService(cache)
+	server := server.NewServerV1(service, configYaml)
 
 	go func() {
 		log.Info().Msgf("Starting API server: %s \n", server.Info())

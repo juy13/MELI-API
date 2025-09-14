@@ -1,9 +1,11 @@
 package config
 
+import "time"
+
 type Config interface {
 	APIConfig
-	CacheConfig
 	MetricsConfig
+	CacheConfig
 }
 
 type APIConfig interface {
@@ -11,18 +13,16 @@ type APIConfig interface {
 	Host() string
 }
 
+type MetricsConfig interface {
+	MetricsServerHost() string
+	MetricsServerPort() int
+}
+
 type CacheConfig interface {
 	CacheAddress() string
 	CachePassword() string
 	CacheDB() int
-	MaxTweets2Keep() int
-	TweetExpireTimeMinutes() int
-	UserFeedExpireTimeMinutes() int
-	TweetTimelineExpireTimeMinutes() int
-	MaxTweetsTimelineItems() int
-}
-
-type MetricsConfig interface {
-	MetricsServerHost() string
-	MetricsServerPort() int
+	PriceTTL() time.Duration
+	ItemDetailsTTL() time.Duration
+	CustomersRecommendationsTTL() time.Duration
 }

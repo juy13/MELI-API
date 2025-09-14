@@ -3,6 +3,7 @@ package config
 import (
 	"io"
 	"os"
+	"time"
 
 	"github.com/rs/zerolog/log"
 	"gopkg.in/yaml.v2"
@@ -14,6 +15,18 @@ type YamlConfig struct {
 
 	// metrics
 	MetricsServer MetricsConfigStruct `yaml:"metrics,omitempty"`
+
+	// cache redis
+	Redis CacheConfigStruct `yaml:"cache"`
+}
+
+type CacheConfigStruct struct {
+	CacheAddress   string        `yaml:"address"`
+	CachePassword  string        `yaml:"password"`
+	CacheDB        int           `yaml:"db"`
+	PriceTTL       time.Duration `yaml:"price_ttl"`
+	ItemDetailsTTL time.Duration `yaml:"item_details_ttl"`
+	CustomersTTL   time.Duration `yaml:"customers_recommendations_ttl"`
 }
 
 type APIStruct struct {
@@ -71,4 +84,27 @@ func (c *YamlConfig) MetricsServerHost() string {
 }
 func (c *YamlConfig) MetricsServerPort() int {
 	return c.MetricsServer.Port
+}
+
+///////////////////////////////////
+//	Redis Config
+///////////////////////////////////
+
+func (c *YamlConfig) CacheAddress() string {
+	return c.Redis.CacheAddress
+}
+func (c *YamlConfig) CachePassword() string {
+	return c.Redis.CachePassword
+}
+func (c *YamlConfig) CacheDB() int {
+	return c.Redis.CacheDB
+}
+func (c *YamlConfig) PriceTTL() time.Duration {
+	return c.Redis.PriceTTL
+}
+func (c *YamlConfig) ItemDetailsTTL() time.Duration {
+	return c.Redis.ItemDetailsTTL
+}
+func (c *YamlConfig) CustomersRecommendationsTTL() time.Duration {
+	return c.Redis.CustomersTTL
 }
