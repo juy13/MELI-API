@@ -49,7 +49,7 @@ func recsKey(userID string) string {
 func (c *RedisCache) GetItemDetails(ctx context.Context, userID, itemID string) (*models.Item, error) {
 	val, err := c.client.Get(ctx, itemDetailsKey(userID, itemID)).Result()
 	if err == redis.Nil {
-		return nil, nil
+		return nil, nil // there is no data and no error
 	} else if err != nil {
 		return nil, err
 	}

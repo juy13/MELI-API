@@ -11,3 +11,6 @@ cache:
   price_ttl: 3600s
   item_details_ttl: 7200s
   customers_recommendations_ttl: 86400s
+database:
+  path: /path/to/items.json
+  path2: /path/to/recommendations.json
