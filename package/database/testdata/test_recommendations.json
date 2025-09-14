@@ -1,0 +1,16 @@
+{
+    "seller1": {
+        "item1": [{
+            "id": "item2",
+            "title": "Comfortable Leather Shoes",
+            "price": {"currency_id": "ARS","amount": 3500},
+            "shipping": {"cost": {"currency_id": "ARS","amount": 120},"estimated_time": "tomorrow"}
+        }],
+        "item4": [{
+            "id": "item4",
+            "title": "UnComfortable Leather Shoes",
+            "price": {"currency_id": "ARS","amount": 3000},
+            "shipping": {"cost": {"currency_id": "ARS","amount": 1200},"estimated_time": "today"}
+        }]
+    }
+}

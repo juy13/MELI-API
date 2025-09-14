@@ -18,6 +18,14 @@ type YamlConfig struct {
 
 	// cache redis
 	Redis CacheConfigStruct `yaml:"cache"`
+
+	// database
+	Database DatabaseConfigStruct `yaml:"database,omitempty"`
+}
+
+type DatabaseConfigStruct struct {
+	Path  string `yaml:"path"`
+	Path2 string `yaml:"path2"`
 }
 
 type CacheConfigStruct struct {
@@ -107,4 +115,16 @@ func (c *YamlConfig) ItemDetailsTTL() time.Duration {
 }
 func (c *YamlConfig) CustomersRecommendationsTTL() time.Duration {
 	return c.Redis.CustomersTTL
+}
+
+///////////////////////////////////
+//	Database Config
+///////////////////////////////////
+
+func (c *YamlConfig) DBPath() string {
+	return c.Database.Path
+}
+
+func (c *YamlConfig) DBPath2() string {
+	return c.Database.Path2
 }

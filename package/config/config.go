@@ -6,6 +6,7 @@ type Config interface {
 	APIConfig
 	MetricsConfig
 	CacheConfig
+	DatabaseConfig
 }
 
 type APIConfig interface {
@@ -25,4 +26,9 @@ type CacheConfig interface {
 	PriceTTL() time.Duration
 	ItemDetailsTTL() time.Duration
 	CustomersRecommendationsTTL() time.Duration
+}
+
+type DatabaseConfig interface {
+	DBPath() string
+	DBPath2() string // for recommendations
 }
