@@ -1,0 +1,96 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a server to get item details for MercadoLibre frontend page.",
+        "title": "MELI Item Detail",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {},
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/v1/item/{itemID}": {
+            "get": {
+                "description": "Getting information for provided item",
+                "tags": [
+                    "item"
+                ],
+                "summary": "Get item info",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "The users id",
+                        "name": "itemID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "User id",
+                        "name": "userID",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "The specified URL is invalid"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "408": {
+                        "description": "Request timed out"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/v1/recommendations/{itemID}": {
+            "get": {
+                "description": "Get recommendations for a given user and item",
+                "tags": [
+                    "item"
+                ],
+                "summary": "Get recommendations",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "The users id",
+                        "name": "itemID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "User id",
+                        "name": "userID",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "The specified URL is invalid"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "408": {
+                        "description": "Request timed out"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        }
+    }
+}

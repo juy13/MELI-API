@@ -1,0 +1,64 @@
+info:
+  contact: {}
+  description: This is a server to get item details for MercadoLibre frontend page.
+  termsOfService: http://swagger.io/terms/
+  title: MELI Item Detail
+  version: "1.0"
+paths:
+  /api/v1/item/{itemID}:
+    get:
+      description: Getting information for provided item
+      parameters:
+      - description: The users id
+        in: path
+        name: itemID
+        required: true
+        type: integer
+      - description: User id
+        in: query
+        name: userID
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: The specified URL is invalid
+        "404":
+          description: Not found
+        "408":
+          description: Request timed out
+        "500":
+          description: Internal server error
+      summary: Get item info
+      tags:
+      - item
+  /api/v1/recommendations/{itemID}:
+    get:
+      description: Get recommendations for a given user and item
+      parameters:
+      - description: The users id
+        in: path
+        name: itemID
+        required: true
+        type: integer
+      - description: User id
+        in: query
+        name: userID
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: The specified URL is invalid
+        "404":
+          description: Not found
+        "408":
+          description: Request timed out
+        "500":
+          description: Internal server error
+      summary: Get recommendations
+      tags:
+      - item
+swagger: "2.0"

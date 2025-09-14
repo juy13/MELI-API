@@ -1,0 +1,6 @@
+api:
+  port: 8080
+  host: localhost
+metrics_server:
+  host: localhost
+  port: 9090
