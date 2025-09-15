@@ -6,8 +6,8 @@ import (
 )
 
 type Service interface {
-	GetItemDetails(ctx context.Context, itemID string, clientID string) (*models.Item, error)
-	GetItemRecommendations(ctx context.Context, itemID string, sellerID, userID string) ([]models.ItemShort, error)
+	GetItemDetails(ctx context.Context, itemID, clientID string) (*models.Item, error)
+	GetItemRecommendations(ctx context.Context, itemID, sellerID, userID string) ([]models.ItemShort, error)
 
 	// Checking if the user is valid or not
 	IsValidUser(ctx context.Context, userID string) (bool, error)

@@ -89,6 +89,20 @@ func (s *ServerV1) itemDetails(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
+	if userID == "" {
+		select {
+		case <-ctx.Done():
+			return
+		default:
+			resp.Status = http.StatusBadRequest
+			resp.Error = "No user found in request"
+			resp.Message = "No user found in request"
+			w.WriteHeader(resp.Status)
+			_ = json.NewEncoder(w).Encode(resp)
+			return
+		}
+	}
+
 	if !s.checker(w, &resp, s.meliService.IsValidItem, ctx, itemID, "item") {
 		return
 	}
@@ -99,21 +113,32 @@ func (s *ServerV1) itemDetails(w http.ResponseWriter, r *http.Request) {
 
 	data, err := s.meliService.GetItemDetails(ctx, itemID, userID)
 	if err != nil {
-		resp.Status = http.StatusInternalServerError
-		resp.Error = err.Error()
-		resp.Message = "Error fetching item details"
-		w.WriteHeader(resp.Status)
-		_ = json.NewEncoder(w).Encode(resp)
-		return
+		select {
+		case <-ctx.Done():
+			return
+		default:
+			resp.Status = http.StatusInternalServerError
+			resp.Error = err.Error()
+			resp.Message = "Error fetching item details"
+			w.WriteHeader(resp.Status)
+			_ = json.NewEncoder(w).Encode(resp)
+			return
+		}
 	}
 
-	resp.Success = true
-	resp.Status = http.StatusOK
-	resp.Message = "Item details retrieved successfully"
-	resp.Data = data
+	select {
+	case <-ctx.Done():
+		return
+	default:
+		resp.Success = true
+		resp.Status = http.StatusOK
+		resp.Message = "Item details retrieved successfully"
+		resp.Data = data
 
-	w.WriteHeader(resp.Status)
-	_ = json.NewEncoder(w).Encode(resp)
+		w.WriteHeader(resp.Status)
+		_ = json.NewEncoder(w).Encode(resp)
+	}
+
 }
 
 // @Summary		Get recommendations
