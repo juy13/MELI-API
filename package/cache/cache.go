@@ -16,4 +16,8 @@ type Cache interface {
 
 	GetCustomersRecommendations(ctx context.Context, userID, itemID string) ([]models.ItemShort, error)
 	SetCustomersRecommendations(ctx context.Context, userID, itemID string, recommendations []models.ItemShort) error
+
+	// check item, user in the storage
+	CheckUser(ctx context.Context, userID string) (bool, error)
+	CheckItem(ctx context.Context, itemID string) (bool, error)
 }

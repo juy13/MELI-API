@@ -43,3 +43,19 @@ func (m *MockCache) GetItemPrice(ctx context.Context, userID, itemID string) (*m
 func (m *MockCache) SetItemPrice(ctx context.Context, userID, itemID string, price *models.Price) error {
 	return m.Called(ctx, userID, itemID, price).Error(0)
 }
+
+func (m *MockCache) CheckItem(ctx context.Context, itemID string) (bool, error) {
+	args := m.Called(ctx, itemID)
+	if recs, ok := args.Get(0).(bool); ok {
+		return recs, args.Error(1)
+	}
+	return false, args.Error(1)
+}
+
+func (m *MockCache) CheckUser(ctx context.Context, userID string) (bool, error) {
+	args := m.Called(ctx, userID)
+	if recs, ok := args.Get(0).(bool); ok {
+		return recs, args.Error(1)
+	}
+	return false, args.Error(1)
+}

@@ -12,6 +12,7 @@ import (
 type JSONDatabase struct {
 	items           map[string]models.Item
 	recommendations map[string]map[string][]models.ItemShort
+	users           map[string]models.User
 }
 
 func NewJSONDatabase(config config.DatabaseConfig) (*JSONDatabase, error) {
@@ -55,4 +56,23 @@ func (db *JSONDatabase) GetItemDetails(ctx context.Context, itemID string) (*mod
 
 func (db *JSONDatabase) GetItemRecommendations(ctx context.Context, sellerID, itemID string) ([]models.ItemShort, error) {
 	return db.recommendations[sellerID][itemID], nil
+}
+
+func (db *JSONDatabase) GetUser(ctx context.Context, userID string) (*models.User, error) {
+	if user, ok := db.users[userID]; ok {
+		return &user, nil
+	}
+	return nil, fmt.Errorf("not implemented")
+}
+
+func (db *JSONDatabase) GetItem(ctx context.Context, itemID string) (*models.ItemShort, error) {
+	if it, ok := db.items[itemID]; ok {
+		return &models.ItemShort{
+			ID:       it.ID,
+			Title:    it.Title,
+			Price:    it.Price,
+			Shipping: it.Shipping,
+		}, nil
+	}
+	return nil, fmt.Errorf("item not found: %s", itemID)
 }
