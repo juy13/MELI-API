@@ -55,8 +55,8 @@ func timeoutMiddleware(limit time.Duration, next http.Handler) http.Handler {
 				resp := models.Response{
 					Success: false,
 					Status:  http.StatusRequestTimeout,
-					Message: "Request timed out",
-					Error:   "Exceeded time limit",
+					Message: RequestTimedOut,
+					Error:   RequestTimedOut,
 					Data:    nil,
 				}
 				w.Header().Set("Content-Type", "application/json")

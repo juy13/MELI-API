@@ -17,6 +17,18 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
+const (
+	InternalServerError          = "Internal Server Error"
+	NoUserFound                  = "No user found in request"
+	ErrorFetchingItemDetails     = "Error fetching item details"
+	ErrorFetchingRecommendations = "Error fetching recommendations"
+	NoRecommendationsFound       = "No recommendations found"
+	RequestTimedOut              = "Request timed out"
+
+	SuccessItemDetails     = "Item details retrieved successfully"
+	SuccessRecommendations = "Recommendations retrieved successfully"
+)
+
 type ServerV1 struct {
 	meliService service.Service
 	server      *http.Server
@@ -85,7 +97,7 @@ func (s *ServerV1) itemDetails(w http.ResponseWriter, r *http.Request) {
 	resp := models.Response{
 		Success: false,
 		Status:  http.StatusInternalServerError,
-		Message: "Internal server error",
+		Message: InternalServerError,
 		Error:   "",
 		Data:    nil,
 	}
@@ -98,8 +110,8 @@ func (s *ServerV1) itemDetails(w http.ResponseWriter, r *http.Request) {
 			return
 		default:
 			resp.Status = http.StatusBadRequest
-			resp.Error = "No user found in request"
-			resp.Message = "No user found in request"
+			resp.Error = NoUserFound
+			resp.Message = NoUserFound
 			w.WriteHeader(resp.Status)
 			_ = json.NewEncoder(w).Encode(resp)
 			return
@@ -122,7 +134,7 @@ func (s *ServerV1) itemDetails(w http.ResponseWriter, r *http.Request) {
 		default:
 			resp.Status = http.StatusInternalServerError
 			resp.Error = err.Error()
-			resp.Message = "Error fetching item details"
+			resp.Message = ErrorFetchingItemDetails
 			w.WriteHeader(resp.Status)
 			_ = json.NewEncoder(w).Encode(resp)
 			return
@@ -135,7 +147,7 @@ func (s *ServerV1) itemDetails(w http.ResponseWriter, r *http.Request) {
 	default:
 		resp.Success = true
 		resp.Status = http.StatusOK
-		resp.Message = "Item details retrieved successfully"
+		resp.Message = SuccessItemDetails
 		resp.Data = data
 
 		w.WriteHeader(resp.Status)
@@ -166,7 +178,7 @@ func (s *ServerV1) recommendations(w http.ResponseWriter, r *http.Request) {
 	resp := models.Response{
 		Success: false,
 		Status:  http.StatusInternalServerError,
-		Message: "Internal server error",
+		Message: InternalServerError,
 		Error:   "",
 		Data:    nil,
 	}
@@ -185,7 +197,7 @@ func (s *ServerV1) recommendations(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		resp.Status = http.StatusInternalServerError
 		resp.Error = err.Error()
-		resp.Message = "Error fetching recommendations"
+		resp.Message = ErrorFetchingRecommendations
 		w.WriteHeader(resp.Status)
 		_ = json.NewEncoder(w).Encode(resp)
 		return
@@ -193,7 +205,7 @@ func (s *ServerV1) recommendations(w http.ResponseWriter, r *http.Request) {
 
 	if len(recs) == 0 {
 		resp.Status = http.StatusNotFound
-		resp.Message = "No recommendations found"
+		resp.Message = NoRecommendationsFound
 		w.WriteHeader(resp.Status)
 		_ = json.NewEncoder(w).Encode(resp)
 		return
@@ -201,7 +213,7 @@ func (s *ServerV1) recommendations(w http.ResponseWriter, r *http.Request) {
 
 	resp.Success = true
 	resp.Status = http.StatusOK
-	resp.Message = "Recommendations retrieved successfully"
+	resp.Message = SuccessRecommendations
 	resp.Data = recs
 
 	w.WriteHeader(resp.Status)
