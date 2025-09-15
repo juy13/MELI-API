@@ -1,0 +1,32 @@
+[
+  {
+    "id": "123",
+    "title": "Red Shoes",
+    "stars": 4,
+    "price": { "currency_id": "USD", "amount": 79.99 },
+    "shipping": {"cost": { "currency_id": "USD", "amount": 5.99 }, "estimated_time": "today" },
+    "colors": ["red", "blue"],
+    "available": true,
+    "guarantee": "1 year",
+    "product_characteristics": { "material": "leather" },
+    "description": "Comfortable leather shoes",
+    "photos": ["p1", "p2"],
+    "qa_section": [ { "question": "Is it waterproof?", "answer": "Yes" } ],
+    "comments": [ { "comment": "Great!", "Stars": 5, "photos": ["c1"] } ]
+  },
+  {
+    "id": "122",
+    "title": "Blue Hat",
+    "stars": 5,
+    "price": { "currency_id": "ARS", "amount": 2500 },
+    "shipping": {"cost": { "currency_id": "ARS", "amount": 1000 }, "estimated_time": "tomorrow" },
+    "colors": ["blue"],
+    "available": true,
+    "guarantee": "6 months",
+    "product_characteristics": { "material": "cotton" },
+    "description": "Light cotton hat",
+    "photos": ["p3"],
+    "qa_section": [],
+    "comments": []
+  }
+]
