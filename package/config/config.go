@@ -12,6 +12,7 @@ type Config interface {
 type APIConfig interface {
 	Port() int
 	Host() string
+	RequestTimeout() time.Duration
 }
 
 type MetricsConfig interface {

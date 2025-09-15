@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"itemmeli/models"
 	"itemmeli/package/config"
+	"log"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -113,4 +114,24 @@ func (c *RedisCache) SetCustomersRecommendations(ctx context.Context, userID, it
 		return err
 	}
 	return c.client.Set(ctx, recsKey(userID), data, c.customersRecommendationsTTL).Err()
+}
+
+func (c *RedisCache) CheckUser(ctx context.Context, userID string) (bool, error) {
+	return c.CheckExists(ctx, userID)
+}
+
+func (c *RedisCache) CheckItem(ctx context.Context, itemID string) (bool, error) {
+	return c.CheckExists(ctx, itemID)
+}
+
+func (c RedisCache) CheckExists(ctx context.Context, key string) (bool, error) {
+	exists, err := c.client.Exists(ctx, key).Result()
+	if err != nil {
+		log.Println("Error checking user in cache:", err)
+		return false, err
+	}
+	if exists == 1 {
+		return true, nil
+	}
+	return false, nil
 }

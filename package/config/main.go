@@ -38,8 +38,9 @@ type CacheConfigStruct struct {
 }
 
 type APIStruct struct {
-	Port int    `yaml:"port"`
-	Host string `yaml:"host"`
+	Port           int           `yaml:"port"`
+	Host           string        `yaml:"host"`
+	RequestTimeout time.Duration `yaml:"timeout"`
 }
 
 type MetricsConfigStruct struct {
@@ -81,6 +82,10 @@ func (c YamlConfig) Port() int {
 
 func (c *YamlConfig) Host() string {
 	return c.API.Host
+}
+
+func (c *YamlConfig) RequestTimeout() time.Duration {
+	return c.API.RequestTimeout
 }
 
 ///////////////////////////////////

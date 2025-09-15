@@ -51,3 +51,9 @@ type Shipping struct {
 	Cost Price  `json:"cost"`
 	Time string `json:"estimated_time"` // today, tomorrow, or a date
 }
+
+type User struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	// .. maybe some more stuff
+}
