@@ -9,7 +9,6 @@ import (
 	"itemmeli/package/service"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 
 	_ "itemmeli/docs/swagger"
@@ -192,7 +191,7 @@ func (s *ServerV1) recommendations(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if recs == nil || len(recs) == 0 {
+	if len(recs) == 0 {
 		resp.Status = http.StatusNotFound
 		resp.Message = "No recommendations found"
 		w.WriteHeader(resp.Status)
@@ -228,7 +227,7 @@ func (s *ServerV1) checker(
 	}
 	if !valid {
 		resp.Status = http.StatusNotFound
-		resp.Message = fmt.Sprintf("%s not found", strings.Title(entityName))
+		resp.Message = fmt.Sprintf("%s not found", entityName)
 		w.WriteHeader(resp.Status)
 		_ = json.NewEncoder(w).Encode(resp)
 		return false
