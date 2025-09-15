@@ -33,7 +33,7 @@ func TestItemDetails(t *testing.T) {
 				},
 			},
 			wantStatus: http.StatusOK,
-			wantMsg:    "Item details retrieved successfully",
+			wantMsg:    SuccessItemDetails,
 		},
 		{
 			name: "invalid item",
@@ -44,7 +44,7 @@ func TestItemDetails(t *testing.T) {
 				GetItemF:     nil,
 			},
 			wantStatus: http.StatusNotFound,
-			wantMsg:    "Item not found",
+			wantMsg:    "item not found",
 		},
 		{
 			name: "invalid user",
@@ -55,7 +55,7 @@ func TestItemDetails(t *testing.T) {
 				GetItemF:     nil,
 			},
 			wantStatus: http.StatusNotFound,
-			wantMsg:    "User not found",
+			wantMsg:    "user not found",
 		},
 		{
 			name: "timeout",
@@ -75,7 +75,7 @@ func TestItemDetails(t *testing.T) {
 				},
 			},
 			wantStatus: http.StatusRequestTimeout,
-			wantMsg:    "Request timed out",
+			wantMsg:    RequestTimedOut,
 		},
 		{
 			name: "no userid",
@@ -86,7 +86,7 @@ func TestItemDetails(t *testing.T) {
 				GetItemF:     func(ctx context.Context, itemID, client string) (*models.Item, error) { return nil, nil },
 			},
 			wantStatus: http.StatusBadRequest,
-			wantMsg:    "No user found in request",
+			wantMsg:    NoUserFound,
 		},
 	}
 

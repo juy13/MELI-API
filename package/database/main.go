@@ -20,7 +20,9 @@ func NewJSONDatabase(config config.DatabaseConfig) (*JSONDatabase, error) {
 	if err != nil {
 		return nil, fmt.Errorf("open json: %w", err)
 	}
-	defer f.Close()
+	defer func() {
+		_ = f.Close() // lint issue
+	}()
 
 	var items []models.Item
 	if err := json.NewDecoder(f).Decode(&items); err != nil {
@@ -36,7 +38,9 @@ func NewJSONDatabase(config config.DatabaseConfig) (*JSONDatabase, error) {
 	if err != nil {
 		return nil, fmt.Errorf("open json: %w", err)
 	}
-	defer fRec.Close()
+	defer func() {
+		_ = fRec.Close() // lint issue
+	}()
 
 	recommendations := make(map[string]map[string][]models.ItemShort)
 	if err := json.NewDecoder(fRec).Decode(&recommendations); err != nil {
