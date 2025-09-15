@@ -1,0 +1,82 @@
+name: Lint and build
+
+on:
+  push:
+  pull_request:
+  release:
+    types:
+      - created 
+
+jobs:
+  lint:
+    name: Lint Go Code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.25
+
+      - name: Download Go Modules
+        run: go mod download
+
+      - name: Tidy Go Modules
+        run: go mod tidy
+
+      - name: Install golangci-lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b $(go env GOPATH)/bin v2.1.6
+
+      - name: Run golangci-lint
+        run: |
+          $(go env GOPATH)/bin/golangci-lint run
+
+  build-and-push:
+    name: Build & Push Docker Image
+    needs: lint
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/') 
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - name: Build Docker image
+        run: |
+          docker build -f deployment/Dockerfile -t ghcr.io/${{ github.repository_owner }}/meli-api:${{ env.VERSION }} --target meli-api .
+          docker tag ghcr.io/${{ github.repository_owner }}/meli-api:${{ env.VERSION }} ghcr.io/${{ github.repository_owner }}/meli-api:latest
+        
+      - name: Push Docker image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/meli-api:${{ env.VERSION }}
+          docker push ghcr.io/${{ github.repository_owner }}/meli-api:latest
+  
+  test:
+    name: Run Go Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.25
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Run tests
+        run: go test ./... -v
