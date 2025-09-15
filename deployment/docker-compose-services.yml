@@ -1,0 +1,59 @@
+version: '3.8'
+
+x-logging: &logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 5m
+      max-file: "2"
+
+volumes:
+  redis-data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /var/data/redis
+      o: bind
+
+services:
+  redis:
+    init: true
+    image: redis:7.4.5-alpine
+    container_name: redis
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 0.5Gb
+    restart: always
+    <<: *logging
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis-data:/data
+    environment:
+      REDIS_PASSWORD: mypassword
+      REDIS_DATABASES: 1
+      REDIS_MAXMEMORY: 50mb
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - meli-api-net
+
+# UI interface for Redis
+  redisinsight:
+    init: true
+    image: redis/redisinsight:latest
+    ports:
+      - "127.0.0.1:8003:5540"
+    volumes:
+      - redis-data:/db
+    networks:
+      - meli-api-net
+    
+networks:
+  meli-api-net: 
+    external: true
