@@ -71,7 +71,7 @@ func timeoutMiddleware(limit time.Duration, next http.Handler) http.Handler {
 func NewMuxServer(config config.APIConfig) (*http.Server, *mux.Router) {
 	router := mux.NewRouter()
 
-	handler := timeoutMiddleware(config.RequestTimeout(), enableCORS(router))
+	handler := enableCORS(router)
 
 	commonAddress := fmt.Sprintf("%s:%d", config.Host(), config.Port())
 	return &http.Server{

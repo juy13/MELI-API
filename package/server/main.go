@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	_ "itemmeli/docs/swagger"
 
@@ -23,6 +24,8 @@ type ServerV1 struct {
 	router      *mux.Router
 
 	info string
+
+	timeout time.Duration
 }
 
 // @title MELI Item Detail
@@ -37,6 +40,7 @@ func NewServerV1(service service.Service, config config.APIConfig) *ServerV1 {
 		server:      muxServer,
 		info:        fmt.Sprintf("Running server on %v", config.Host()+":"+strconv.Itoa(config.Port())),
 		router:      router,
+		timeout:     config.RequestTimeout(),
 	}
 	server.registerRoutes()
 	return server
@@ -47,8 +51,8 @@ func (s *ServerV1) Info() string {
 }
 
 func (s *ServerV1) registerRoutes() {
-	s.router.HandleFunc("/api/v1/item", s.itemDetails).Methods("GET")
-	s.router.HandleFunc("/api/v1/recommendations", s.recommendations).Methods("GET")
+	s.router.Handle("/api/v1/item/{itemID}", timeoutMiddleware(s.timeout, http.HandlerFunc(s.itemDetails))).Methods("GET")
+	s.router.Handle("/api/v1/recommendations/{itemID}", timeoutMiddleware(s.timeout, http.HandlerFunc(s.recommendations))).Methods("GET")
 	s.router.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
 		httpSwagger.URL("http://localhost:8080/swagger/doc.json"), // swagger.json route
 	))
