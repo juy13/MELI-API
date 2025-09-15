@@ -54,7 +54,7 @@ func (s *ServerV1) registerRoutes() {
 	s.router.Handle("/api/v1/item/{itemID}", timeoutMiddleware(s.timeout, http.HandlerFunc(s.itemDetails))).Methods("GET")
 	s.router.Handle("/api/v1/recommendations/{itemID}", timeoutMiddleware(s.timeout, http.HandlerFunc(s.recommendations))).Methods("GET")
 	s.router.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
-		httpSwagger.URL("http://localhost:8080/swagger/doc.json"), // swagger.json route
+		httpSwagger.URL("/swagger/doc.json"), // swagger.json route
 	))
 }
 

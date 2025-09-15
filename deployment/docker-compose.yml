@@ -1,0 +1,45 @@
+version: '3.8'
+
+x-logging: &logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 5m
+      max-file: "2"
+
+volumes:
+  data-storage:
+    driver: local
+    driver_opts:
+      type: none
+      device: /data/storage
+      o: bind
+
+services:
+  api-server:
+    image: api-server
+    build:
+      context: ../
+      dockerfile: deployment/Dockerfile
+      target: meli-api
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 300M
+    networks:
+      - meli-api-net
+    command: ["./api", "--config", "/app/config.yml"]
+    # TODO add health check
+    ports:
+      - 127.0.0.1:8080:8080 # api port
+      - 127.0.0.1:8081:9090 # metrics port
+    <<: *logging
+    volumes:
+      - path/to/config.yml:/app/config.yml
+      - data-storage:/data
+
+networks:
+  meli-api-net: 
+    external: true
