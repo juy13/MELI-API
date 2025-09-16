@@ -8,10 +8,27 @@ import (
 	"itemmeli/package/config"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
+
+	"itemmeli/metrics"
 
 	"github.com/gorilla/mux"
 )
+
+type contextKey string
+
+const pathKey contextKey = "path"
+
+type statusResponseWriter struct {
+	http.ResponseWriter
+	status int
+}
+
+func (w *statusResponseWriter) WriteHeader(status int) {
+	w.status = status
+	w.ResponseWriter.WriteHeader(status)
+}
 
 func enableCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -29,6 +46,18 @@ func enableCORS(next http.Handler) http.Handler {
 	})
 }
 
+func routePathMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if route := mux.CurrentRoute(r); route != nil {
+			if tmpl, err := route.GetPathTemplate(); err == nil {
+				ctx := context.WithValue(r.Context(), pathKey, tmpl)
+				r = r.WithContext(ctx)
+			}
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 func timeoutMiddleware(limit time.Duration, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(r.Context(), limit)
@@ -39,14 +68,18 @@ func timeoutMiddleware(limit time.Duration, next http.Handler) http.Handler {
 		start := time.Now()
 
 		done := make(chan struct{})
+		sw := &statusResponseWriter{ResponseWriter: w, status: http.StatusOK}
 		go func() {
-			next.ServeHTTP(w, r)
+			next.ServeHTTP(sw, r)
 			close(done)
 		}()
 
 		select {
 		case <-done:
 			elapsed := time.Since(start)
+			path := r.Context().Value(pathKey).(string)
+			metrics.UpdTimeResponse(r.Method, path, strconv.Itoa(sw.status), elapsed.Seconds())
+			metrics.IncHttpRequestsTotal(r.Method, path, strconv.Itoa(sw.status))
 			log.Printf("%s %s finished in %s", r.Method, r.URL.Path, elapsed)
 			return
 
@@ -71,11 +104,11 @@ func timeoutMiddleware(limit time.Duration, next http.Handler) http.Handler {
 func NewMuxServer(config config.APIConfig) (*http.Server, *mux.Router) {
 	router := mux.NewRouter()
 
-	handler := enableCORS(router)
+	router.Use(routePathMiddleware, enableCORS)
 
 	commonAddress := fmt.Sprintf("%s:%d", config.Host(), config.Port())
 	return &http.Server{
 		Addr:    commonAddress,
-		Handler: handler,
+		Handler: router,
 	}, router
 }

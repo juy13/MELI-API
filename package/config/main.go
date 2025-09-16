@@ -14,7 +14,7 @@ type YamlConfig struct {
 	API APIStruct `yaml:"api"`
 
 	// metrics
-	MetricsServer MetricsConfigStruct `yaml:"metrics,omitempty"`
+	MetricsServer MetricsConfigStruct `yaml:"metrics"`
 
 	// cache redis
 	Redis CacheConfigStruct `yaml:"cache"`
