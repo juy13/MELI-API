@@ -1,7 +1,7 @@
 api:
   port: 8080
   host: localhost
-metrics_server:
+metrics:
   host: localhost
   port: 9090
 cache:

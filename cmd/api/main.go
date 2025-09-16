@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"itemmeli/metrics"
 	"itemmeli/package/cache"
 	"itemmeli/package/config"
 	"itemmeli/package/database"
-	"itemmeli/package/server"
+	server "itemmeli/package/server/api"
+	metrics_server "itemmeli/package/server/metrics"
 	"itemmeli/package/service"
 
 	"net/http"
@@ -62,6 +64,8 @@ func runServer(cCtx *cli.Context) error {
 		return fmt.Errorf("failed to load config: %w", err)
 	}
 
+	metricsServer := metrics_server.NewMetricsServer(configYaml)
+
 	cache := cache.NewRedisCache(configYaml)
 	database, err := database.NewJSONDatabase(configYaml)
 	if err != nil {
@@ -75,7 +79,13 @@ func runServer(cCtx *cli.Context) error {
 		if err := server.Start(); err != nil && err != http.ErrServerClosed {
 			log.Fatal().Msgf("API server failed: %v", err)
 		}
+	}()
 
+	go func() {
+		log.Info().Msgf("Starting Metrics server: %s \n", metricsServer.Info())
+		if err := metricsServer.Start(); err != nil && err != http.ErrServerClosed {
+			log.Fatal().Msgf("Metrics server failed: %v", err)
+		}
 	}()
 
 	<-signalCtx.Done() // waiting for signal to stop the server
@@ -83,6 +93,14 @@ func runServer(cCtx *cli.Context) error {
 	if err = server.Stop(cCtx.Context); err != nil {
 		log.Fatal().Msg("Can't terminate data server")
 	}
+	log.Info().Msg("Shut down metrics server")
+	if err = metricsServer.Stop(cCtx.Context); err != nil {
+		log.Fatal().Msg("Can't terminate metrics server")
+	}
 
 	return nil
+}
+
+func init() {
+	metrics.Start()
 }

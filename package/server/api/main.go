@@ -27,6 +27,10 @@ const (
 
 	SuccessItemDetails     = "Item details retrieved successfully"
 	SuccessRecommendations = "Recommendations retrieved successfully"
+
+	// PATH
+	PATH_ITEM_DETAILS    = "/items/{id}"
+	PATH_RECOMMENDATIONS = "/recommendations/{id}"
 )
 
 type ServerV1 struct {

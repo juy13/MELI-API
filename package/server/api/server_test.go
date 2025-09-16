@@ -96,6 +96,8 @@ func TestItemDetails(t *testing.T) {
 
 			req := httptest.NewRequest(http.MethodGet, tt.url, nil)
 			rr := httptest.NewRecorder()
+			ctx := context.WithValue(req.Context(), pathKey, "/items/{id}")
+			req = req.WithContext(ctx)
 
 			handler := timeoutMiddleware(1*time.Second, http.HandlerFunc(s.itemDetails))
 
