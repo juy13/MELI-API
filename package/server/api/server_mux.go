@@ -77,7 +77,7 @@ func timeoutMiddleware(limit time.Duration, next http.Handler) http.Handler {
 		select {
 		case <-done:
 			elapsed := time.Since(start)
-			path := r.Context().Value("path").(string)
+			path := r.Context().Value(pathKey).(string)
 			metrics.UpdTimeResponse(r.Method, path, strconv.Itoa(sw.status), elapsed.Seconds())
 			metrics.IncHttpRequestsTotal(r.Method, path, strconv.Itoa(sw.status))
 			log.Printf("%s %s finished in %s", r.Method, r.URL.Path, elapsed)
