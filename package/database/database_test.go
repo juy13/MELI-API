@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"itemmeli/constants"
 	"path/filepath"
 	"testing"
 
@@ -51,7 +52,7 @@ func TestJSONDatabase_Recommendations(t *testing.T) {
 	db, err := NewJSONDatabase(localConfig)
 	require.NoError(t, err)
 
-	recs, err := db.GetItemRecommendations(context.Background(), "seller1", "item1")
+	recs, err := db.GetItemRecommendations(context.Background(), constants.UserID1, constants.ItemID1, constants.SellerID1)
 	require.NoError(t, err)
 
 	require.Len(t, recs, 1)

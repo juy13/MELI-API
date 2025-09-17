@@ -25,14 +25,14 @@ const docTemplate = `{
                 "summary": "Get item info",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "The users id",
+                        "type": "string",
+                        "description": "The item id",
                         "name": "itemID",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "User id",
                         "name": "userID",
                         "in": "query",
@@ -41,19 +41,34 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
                     },
                     "400": {
-                        "description": "The specified URL is invalid"
+                        "description": "The specified URL is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
                     },
                     "404": {
-                        "description": "Not found"
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
                     },
                     "408": {
-                        "description": "Request timed out"
+                        "description": "Request timed out",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
                     },
                     "500": {
-                        "description": "Internal server error"
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
                     }
                 }
             }
@@ -67,14 +82,21 @@ const docTemplate = `{
                 "summary": "Get recommendations",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "The users id",
+                        "type": "string",
+                        "description": "The item id",
                         "name": "itemID",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "type": "integer",
+                        "type": "string",
+                        "description": "Seller id",
+                        "name": "sellerID",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "User id",
                         "name": "userID",
                         "in": "query",
@@ -83,20 +105,55 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
                     },
                     "400": {
-                        "description": "The specified URL is invalid"
+                        "description": "The specified URL is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
                     },
                     "404": {
-                        "description": "Not found"
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
                     },
                     "408": {
-                        "description": "Request timed out"
+                        "description": "Request timed out",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
                     },
                     "500": {
-                        "description": "Internal server error"
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
                     }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.Response": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         }
@@ -110,7 +167,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "MELI Item Detail",
-	Description:      "This is a server to get item details for MercadoLibre frontend page.",
+	Description:      "This is an API to get item details for MercadoLibre frontend page.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

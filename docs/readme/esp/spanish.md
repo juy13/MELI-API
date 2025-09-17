@@ -12,11 +12,13 @@ Este proyecto es una API simple para obtener detalles de ítems de Mercado Libre
 Para instalar el proyecto, necesitas tener Go instalado en la máquina. Luego, podes ejecutar los siguientes comandos:
 
 ```sh
-git clone https://github.com/juy13/MELI-API
-cd meli-item-detail
 go mod tidy
 go build -o meli-api
 ```
+
+## Configuración
+
+El proyecto utiliza `config.yaml` para la configuración. Podés modificar  para cambiar el puerto de la API y otros ajustes. El archivo de configuración se encuentra en `configs/config.yaml`.
 
 ## Ejecución
 
@@ -28,9 +30,11 @@ docker compose -f docker-compose-services.yml up -d
 
 Asegúrate de que Redis esté en ejecución antes de iniciar la API. Debes redefinir la variable de entorno `REDIS_PASSWORD` en el archivo `deployment/docker-compose-services.yml` con tu contraseña. Agregar la ruta del dispositivo `/var/data/redis` a las `driver_opts` del volumen en el archivo `docker-compose-services.yml` permite que los datos persistan entre reinicios del contenedor.
 
-## Configuración
+Y luego inicia la API con el siguiente comando:
 
-El proyecto utiliza `config.yaml` para la configuración. Podés modificar  para cambiar el puerto de la API y otros ajustes. El archivo de configuración se encuentra en `configs/config.yaml`.
+```sh
+./meli-api -c configs/config.yaml
+```
 
 ## Base de Datos
 
@@ -66,6 +70,10 @@ Para ejecutar la aplicación usando docker compose, navega al directorio `deploy
 ```sh
 docker compose -f docker-compose.yml up --build
 ```
+
+## CI/CD
+
+El proyecto utiliza GitHub Actions para la integración y entrega continua. El flujo de trabajo se activa con cada push. Realiza linting y pruebas de la aplicación. Si hay un lanzamiento con una etiqueta, construye contenedores Docker y los sube a GitHub Packages. Archivo a encontrar: .github/workflows/ci.yml
 
 ## Swagger
 

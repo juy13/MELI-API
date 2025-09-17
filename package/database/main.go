@@ -58,7 +58,8 @@ func (db *JSONDatabase) GetItemDetails(ctx context.Context, itemID string) (*mod
 	return &it, nil
 }
 
-func (db *JSONDatabase) GetItemRecommendations(ctx context.Context, sellerID, itemID string) ([]models.ItemShort, error) {
+func (db *JSONDatabase) GetItemRecommendations(ctx context.Context, userID, itemID, sellerID string) ([]models.ItemShort, error) {
+	// For now we omit the user from here, but it should be added
 	return db.recommendations[sellerID][itemID], nil
 }
 
@@ -66,7 +67,13 @@ func (db *JSONDatabase) GetUser(ctx context.Context, userID string) (*models.Use
 	if user, ok := db.users[userID]; ok {
 		return &user, nil
 	}
-	return nil, fmt.Errorf("not implemented")
+
+	// It's a mock for now, but actually should be a part of request for getting user from DB
+	// OR also can be a user service, but should be on level UPPER
+	return &models.User{
+		ID:   "121",
+		Name: "Me",
+	}, nil
 }
 
 func (db *JSONDatabase) GetItem(ctx context.Context, itemID string) (*models.ItemShort, error) {

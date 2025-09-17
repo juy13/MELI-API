@@ -18,8 +18,8 @@ func (m *MockDB) GetItemDetails(ctx context.Context, itemID string) (*models.Ite
 	}
 	return nil, args.Error(1)
 }
-func (m *MockDB) GetItemRecommendations(ctx context.Context, sellerID, itemID string) ([]models.ItemShort, error) {
-	args := m.Called(ctx, sellerID, itemID)
+func (m *MockDB) GetItemRecommendations(ctx context.Context, userID, itemID, sellerID string) ([]models.ItemShort, error) {
+	args := m.Called(ctx, userID, itemID, sellerID)
 	if recs, ok := args.Get(0).([]models.ItemShort); ok {
 		return recs, args.Error(1)
 	}

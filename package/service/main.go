@@ -19,6 +19,21 @@ type APIService struct {
 	reCheckEntry *regexp.Regexp
 }
 
+// Item service. It's a basic service that takes cache and database.
+// BUT, it can also use:
+// 1. Shipping service -- to predict time and price for shipping
+// 2. Price service -- to predict price of an item based on client (discounts, etc)
+// It's not implemented yet, but it's a good idea to have it in mind.
+// Their interfaces will be some kind like this:
+// type Shipping interface {
+// 	PredictTimeAndPrice(item *models.Item, userID string) (time.Time, float64, error)
+// }
+// type Price interface {
+// 	PredictPrice(item *models.Item, userID string) (float64, error)
+// }
+// AND more, the task doesn't define, what should be used,
+// so we can create whatever we want, but let's stop with cache and database
+
 func NewService(cache cache.Cache, db database.Database) Service {
 	re, err := regexp.Compile(`^[0-9-]*$`)
 	if err != nil {
@@ -51,19 +66,19 @@ func (api *APIService) GetItemDetails(ctx context.Context, itemID string, client
 	return item, nil
 }
 
-func (api *APIService) GetItemRecommendations(ctx context.Context, itemID string, sellerID, userID string) ([]models.ItemShort, error) {
-	cachedRecs, err := api.cache.GetCustomersRecommendations(ctx, userID, itemID)
+func (api *APIService) GetItemRecommendations(ctx context.Context, userID, itemID, sellerID string) ([]models.ItemShort, error) {
+	cachedRecs, err := api.cache.GetCustomersRecommendations(ctx, userID, itemID, sellerID)
 	if err == nil && cachedRecs != nil {
 		return cachedRecs, nil
 	}
 
-	recs, err := api.db.GetItemRecommendations(ctx, sellerID, itemID)
+	recs, err := api.db.GetItemRecommendations(ctx, userID, itemID, sellerID)
 	if err != nil {
 		return nil, err
 	}
 
 	// we are ignoring redis errors cz if it fails -- nothing wrong, we should have a monitoring for this case.
-	_ = api.cache.SetCustomersRecommendations(ctx, userID, itemID, recs)
+	_ = api.cache.SetCustomersRecommendations(ctx, userID, itemID, sellerID, recs)
 
 	return recs, nil
 }
@@ -102,7 +117,7 @@ func (api *APIService) IsValidUser(ctx context.Context, userID string) (bool, er
 		return true, nil
 	}
 
-	_, err = api.db.GetItem(ctx, userID)
+	_, err = api.db.GetUser(ctx, userID)
 	if err != nil {
 		return false, err
 	}

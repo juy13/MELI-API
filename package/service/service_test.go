@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"itemmeli/constants"
 	"itemmeli/mock"
 	"itemmeli/models"
 	"testing"
@@ -56,9 +57,9 @@ func TestGetItemRecommendations_CacheHit(t *testing.T) {
 
 	expected := []models.ItemShort{{ID: "rec1", Title: "Cached Rec"}}
 
-	cache.On("GetCustomersRecommendations", ctx, "client1", "item1").Return(expected, nil)
+	cache.On("GetCustomersRecommendations", ctx, constants.UserID1, constants.ItemID1, constants.SellerID1).Return(expected, nil)
 
-	recs, err := api.GetItemRecommendations(ctx, "item1", "seller1", "client1")
+	recs, err := api.GetItemRecommendations(ctx, constants.UserID1, constants.ItemID1, constants.SellerID1)
 	require.NoError(t, err)
 	require.Equal(t, expected, recs)
 
@@ -74,11 +75,11 @@ func TestGetItemRecommendations_CacheMiss_DBHit(t *testing.T) {
 
 	expected := []models.ItemShort{{ID: "rec1", Title: "From DB"}}
 
-	cache.On("GetCustomersRecommendations", ctx, "client1", "item1").Return(nil, errors.New("cache miss"))
-	db.On("GetItemRecommendations", ctx, "seller1", "item1").Return(expected, nil)
-	cache.On("SetCustomersRecommendations", ctx, "client1", "item1", expected).Return(nil)
+	cache.On("GetCustomersRecommendations", ctx, constants.UserID1, constants.ItemID1, constants.SellerID1).Return(nil, errors.New("cache miss"))
+	db.On("GetItemRecommendations", ctx, constants.UserID1, constants.ItemID1, constants.SellerID1).Return(expected, nil)
+	cache.On("SetCustomersRecommendations", ctx, constants.UserID1, constants.ItemID1, constants.SellerID1, expected).Return(nil)
 
-	recs, err := api.GetItemRecommendations(ctx, "item1", "seller1", "client1")
+	recs, err := api.GetItemRecommendations(ctx, constants.UserID1, constants.ItemID1, constants.SellerID1)
 	require.NoError(t, err)
 	require.Equal(t, expected, recs)
 
