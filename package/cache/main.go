@@ -43,8 +43,8 @@ func itemPriceKey(userID, itemID string) string {
 	return fmt.Sprintf("item:price:%s:%s", userID, itemID)
 }
 
-func recsKey(userID string) string {
-	return fmt.Sprintf("recs:%s", userID)
+func recsKey(userID, itemID, sellerID string) string {
+	return fmt.Sprintf("recs:%s:%s:%s", userID, itemID, sellerID)
 }
 
 func (c *RedisCache) GetItemDetails(ctx context.Context, userID, itemID string) (*models.Item, error) {
@@ -93,8 +93,8 @@ func (c *RedisCache) SetItemPrice(ctx context.Context, userID, itemID string, pr
 	return c.client.Set(ctx, itemPriceKey(userID, itemID), data, c.priceTTl).Err()
 }
 
-func (c *RedisCache) GetCustomersRecommendations(ctx context.Context, userID, itemID string) ([]models.ItemShort, error) {
-	val, err := c.client.Get(ctx, recsKey(userID)).Result()
+func (c *RedisCache) GetCustomersRecommendations(ctx context.Context, userID, itemID, sellerID string) ([]models.ItemShort, error) {
+	val, err := c.client.Get(ctx, recsKey(userID, itemID, sellerID)).Result()
 	if err == redis.Nil {
 		return nil, nil
 	} else if err != nil {
@@ -108,12 +108,12 @@ func (c *RedisCache) GetCustomersRecommendations(ctx context.Context, userID, it
 	return recs, nil
 }
 
-func (c *RedisCache) SetCustomersRecommendations(ctx context.Context, userID, itemID string, recommendations []models.ItemShort) error {
+func (c *RedisCache) SetCustomersRecommendations(ctx context.Context, userID, itemID, sellerID string, recommendations []models.ItemShort) error {
 	data, err := json.Marshal(recommendations)
 	if err != nil {
 		return err
 	}
-	return c.client.Set(ctx, recsKey(userID), data, c.customersRecommendationsTTL).Err()
+	return c.client.Set(ctx, recsKey(userID, itemID, sellerID), data, c.customersRecommendationsTTL).Err()
 }
 
 func (c *RedisCache) CheckUser(ctx context.Context, userID string) (bool, error) {

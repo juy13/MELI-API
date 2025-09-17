@@ -22,15 +22,15 @@ func (m *MockCache) SetItemDetails(ctx context.Context, userID, itemID string, i
 	return m.Called(ctx, userID, itemID, item).Error(0)
 }
 
-func (m *MockCache) GetCustomersRecommendations(ctx context.Context, userID, itemID string) ([]models.ItemShort, error) {
-	args := m.Called(ctx, userID, itemID)
+func (m *MockCache) GetCustomersRecommendations(ctx context.Context, userID, itemID, sellerID string) ([]models.ItemShort, error) {
+	args := m.Called(ctx, userID, itemID, sellerID)
 	if recs, ok := args.Get(0).([]models.ItemShort); ok {
 		return recs, args.Error(1)
 	}
 	return nil, args.Error(1)
 }
-func (m *MockCache) SetCustomersRecommendations(ctx context.Context, userID, itemID string, recs []models.ItemShort) error {
-	return m.Called(ctx, userID, itemID, recs).Error(0)
+func (m *MockCache) SetCustomersRecommendations(ctx context.Context, userID, itemID, sellerID string, recs []models.ItemShort) error {
+	return m.Called(ctx, userID, itemID, sellerID, recs).Error(0)
 }
 
 func (m *MockCache) GetItemPrice(ctx context.Context, userID, itemID string) (*models.Price, error) {

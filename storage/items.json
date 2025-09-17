@@ -28,5 +28,20 @@
     "photos": ["p3"],
     "qa_section": [],
     "comments": []
+  },
+  {
+    "id": "121",
+    "title": "Something interesting",
+    "stars": 5,
+    "price": { "currency_id": "USD", "amount": 2500 },
+    "shipping": {"cost": { "currency_id": "ARS", "amount": 1000000000 }, "estimated_time": "21.03.2025" },
+    "colors": ["green", "white"],
+    "available": true,
+    "guarantee": "",
+    "product_characteristics": { "material": "cotton" },
+    "description": "Light cotton hat",
+    "photos": ["p3"],
+    "qa_section": [],
+    "comments": []
   }
 ]

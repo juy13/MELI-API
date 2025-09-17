@@ -197,7 +197,7 @@ func (s *ServerV1) recommendations(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	recs, err := s.meliService.GetItemRecommendations(ctx, itemID, sellerID, userID)
+	recs, err := s.meliService.GetItemRecommendations(ctx, userID, itemID, sellerID)
 	if err != nil {
 		resp.Status = http.StatusInternalServerError
 		resp.Error = err.Error()
@@ -250,3 +250,5 @@ func (s *ServerV1) checker(
 	}
 	return true
 }
+
+var _ = models.Response{}

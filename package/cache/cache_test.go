@@ -2,6 +2,7 @@ package cache
 
 import (
 	"context"
+	"itemmeli/constants"
 	"itemmeli/models"
 	"testing"
 	"time"
@@ -12,11 +13,6 @@ import (
 )
 
 var rdb *miniredis.Miniredis
-
-const (
-	itemID1 = "item1"
-	userID1 = "user1"
-)
 
 func RedisCacheTest(t *testing.T) (*RedisCache, func()) {
 	rdb = miniredis.RunT(t)
@@ -42,12 +38,12 @@ func TestItemDetails(t *testing.T) {
 	cache, cleanup := RedisCacheTest(t)
 	defer cleanup()
 
-	item := &models.Item{ID: itemID1, Title: "Test Item"}
+	item := &models.Item{ID: constants.ItemID1, Title: "Test Item"}
 
-	err := cache.SetItemDetails(context.Background(), userID1, itemID1, item)
+	err := cache.SetItemDetails(context.Background(), constants.UserID1, constants.ItemID1, item)
 	require.NoError(t, err)
 
-	gotItem, err := cache.GetItemDetails(context.Background(), userID1, itemID1)
+	gotItem, err := cache.GetItemDetails(context.Background(), constants.UserID1, constants.ItemID1)
 	require.NoError(t, err)
 	require.NotNil(t, gotItem)
 	require.Equal(t, "Test Item", gotItem.Title)
@@ -57,13 +53,13 @@ func TestItemDetailsExpired(t *testing.T) {
 	cache, cleanup := RedisCacheTest(t)
 	defer cleanup()
 
-	item := &models.Item{ID: itemID1, Title: "Test Item"}
+	item := &models.Item{ID: constants.ItemID1, Title: "Test Item"}
 
-	err := cache.SetItemDetails(context.Background(), userID1, itemID1, item)
+	err := cache.SetItemDetails(context.Background(), constants.UserID1, constants.ItemID1, item)
 	require.NoError(t, err)
 	rdb.FastForward(time.Second * 4) // miniredis doesn't have any timer inside, so we just moving the time
 
-	gotItem, err := cache.GetItemDetails(context.Background(), userID1, itemID1)
+	gotItem, err := cache.GetItemDetails(context.Background(), constants.UserID1, constants.ItemID1)
 	require.Nil(t, err)
 	require.Nil(t, gotItem)
 }
@@ -75,10 +71,10 @@ func TestItemPrice(t *testing.T) {
 
 	price := &models.Price{Amount: itemPrice}
 
-	err := cache.SetItemPrice(context.Background(), userID1, itemID1, price)
+	err := cache.SetItemPrice(context.Background(), constants.UserID1, constants.ItemID1, price)
 	require.NoError(t, err)
 
-	gotItem, err := cache.GetItemPrice(context.Background(), userID1, itemID1)
+	gotItem, err := cache.GetItemPrice(context.Background(), constants.UserID1, constants.ItemID1)
 	require.NoError(t, err)
 	require.NotNil(t, gotItem)
 	require.Equal(t, itemPrice, gotItem.Amount)
@@ -91,11 +87,11 @@ func TestItemPriceExpired(t *testing.T) {
 
 	price := &models.Price{Amount: itemPrice}
 
-	err := cache.SetItemPrice(context.Background(), userID1, itemID1, price)
+	err := cache.SetItemPrice(context.Background(), constants.UserID1, constants.ItemID1, price)
 	require.NoError(t, err)
 	rdb.FastForward(time.Second * 4)
 
-	gotItem, err := cache.GetItemPrice(context.Background(), userID1, itemID1)
+	gotItem, err := cache.GetItemPrice(context.Background(), constants.UserID1, constants.ItemID1)
 	require.Nil(t, err)
 	require.Nil(t, gotItem)
 }
@@ -108,10 +104,10 @@ func TestCustomersRecommendations(t *testing.T) {
 		{ID: "item2", Title: "Item 2"},
 	}
 
-	err := cache.SetCustomersRecommendations(context.Background(), userID1, itemID1, items)
+	err := cache.SetCustomersRecommendations(context.Background(), constants.UserID1, constants.ItemID1, constants.SellerID1, items)
 	require.NoError(t, err)
 
-	gotItem, err := cache.GetCustomersRecommendations(context.Background(), userID1, itemID1)
+	gotItem, err := cache.GetCustomersRecommendations(context.Background(), constants.UserID1, constants.ItemID1, constants.SellerID1)
 	require.NoError(t, err)
 	require.NotNil(t, gotItem)
 	require.Equal(t, len(items), len(gotItem))
@@ -130,11 +126,11 @@ func TestCustomersRecommendationsExpired(t *testing.T) {
 		{ID: "item2", Title: "Item 2"},
 	}
 
-	err := cache.SetCustomersRecommendations(context.Background(), userID1, itemID1, items)
+	err := cache.SetCustomersRecommendations(context.Background(), constants.UserID1, constants.ItemID1, constants.SellerID1, items)
 	require.NoError(t, err)
 	rdb.FastForward(time.Second * 4)
 
-	gotItem, err := cache.GetCustomersRecommendations(context.Background(), userID1, itemID1)
+	gotItem, err := cache.GetCustomersRecommendations(context.Background(), constants.UserID1, constants.SellerID1, constants.ItemID1)
 	require.Nil(t, err)
 	require.Nil(t, gotItem)
 }

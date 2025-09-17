@@ -51,19 +51,19 @@ func (api *APIService) GetItemDetails(ctx context.Context, itemID string, client
 	return item, nil
 }
 
-func (api *APIService) GetItemRecommendations(ctx context.Context, itemID string, sellerID, userID string) ([]models.ItemShort, error) {
-	cachedRecs, err := api.cache.GetCustomersRecommendations(ctx, userID, itemID)
+func (api *APIService) GetItemRecommendations(ctx context.Context, userID, itemID, sellerID string) ([]models.ItemShort, error) {
+	cachedRecs, err := api.cache.GetCustomersRecommendations(ctx, userID, itemID, sellerID)
 	if err == nil && cachedRecs != nil {
 		return cachedRecs, nil
 	}
 
-	recs, err := api.db.GetItemRecommendations(ctx, sellerID, itemID)
+	recs, err := api.db.GetItemRecommendations(ctx, userID, itemID, sellerID)
 	if err != nil {
 		return nil, err
 	}
 
 	// we are ignoring redis errors cz if it fails -- nothing wrong, we should have a monitoring for this case.
-	_ = api.cache.SetCustomersRecommendations(ctx, userID, itemID, recs)
+	_ = api.cache.SetCustomersRecommendations(ctx, userID, itemID, sellerID, recs)
 
 	return recs, nil
 }
@@ -102,7 +102,7 @@ func (api *APIService) IsValidUser(ctx context.Context, userID string) (bool, er
 		return true, nil
 	}
 
-	_, err = api.db.GetItem(ctx, userID)
+	_, err = api.db.GetUser(ctx, userID)
 	if err != nil {
 		return false, err
 	}
